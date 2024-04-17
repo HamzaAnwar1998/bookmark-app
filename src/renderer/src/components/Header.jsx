@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /* eslint-disable react/prop-types */
 const Header = ({ setModal, setItems }) => {
@@ -21,6 +21,21 @@ const Header = ({ setModal, setItems }) => {
     setTimer(newTimer)
   }
 
+  // ref
+  const searchRef = useRef(null)
+
+  // focus search
+  useEffect(() => {
+    window.electron.ipcRenderer.on('focus-search', () => {
+      searchRef.current.focus()
+    })
+
+    // Effect cleanup
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('focus-search')
+    }
+  }, [])
+
   return (
     <>
       <div className="input-div">
@@ -32,6 +47,7 @@ const Header = ({ setModal, setItems }) => {
           placeholder="Search by title"
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
+          ref={searchRef}
         />
       </div>
     </>

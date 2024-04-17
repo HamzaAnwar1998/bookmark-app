@@ -8,6 +8,7 @@ function App() {
   const [modal, setModal] = useState(false)
   const [addItemLoading, setAddItemLoading] = useState(false)
   const [items, setItems] = useState([])
+  const [invalidURL, setInvalidURL] = useState(null)
 
   // get all items from LS
   useEffect(() => {
@@ -17,20 +18,37 @@ function App() {
     }
   }, [])
 
+  // listen for open modal from the app menu
+  useEffect(() => {
+    window.electron.ipcRenderer.on('open-modal', () => {
+      setModal(true)
+    })
+
+    // Effect cleanup
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('open-modal')
+    }
+  }, [])
+
   return (
     <div className="wrapper">
       <Header setModal={setModal} setItems={setItems} />
       <Items
         setAddItemLoading={setAddItemLoading}
+        modal={modal}
         setModal={setModal}
         items={items}
         setItems={setItems}
+        setInvalidURL={setInvalidURL}
       />
       {modal && (
         <Modal
           setModal={setModal}
           addItemLoading={addItemLoading}
           setAddItemLoading={setAddItemLoading}
+          invalidURL={invalidURL}
+          setInvalidURL={setInvalidURL}
+          items={items}
         />
       )}
     </div>

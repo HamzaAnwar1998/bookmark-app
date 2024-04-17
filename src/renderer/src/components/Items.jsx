@@ -1,17 +1,22 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
 
-const Items = ({ setAddItemLoading, setModal, items, setItems }) => {
+const Items = ({ setAddItemLoading, modal, setModal, items, setItems, setInvalidURL }) => {
   // get newly added item
   useEffect(() => {
     window.electron.ipcRenderer.on('new-item-success', (e, args) => {
-      setItems((prevItems) => {
-        const updatedItems = [args, ...prevItems]
-        saveItemsToLocalStorage(updatedItems)
-        return updatedItems
-      })
       setAddItemLoading(false)
-      setModal(false)
+      if (!args.err) {
+        setItems((prevItems) => {
+          const updatedItems = [args, ...prevItems]
+          saveItemsToLocalStorage(updatedItems)
+          return updatedItems
+        })
+        setModal(false)
+        setInvalidURL(null)
+      } else {
+        setInvalidURL(args.err)
+      }
     })
 
     // Effect cleanup
@@ -56,21 +61,37 @@ const Items = ({ setAddItemLoading, setModal, items, setItems }) => {
   }
 
   // open item on enter
-  // useEffect(() => {
-  //   const handleEnter = (e) => {
-  //     if (e.key === 'Enter') {
-  //       const selectedItem = items[selectedIndex]
-  //       if (selectedItem) {
-  //         openURLInNewWindow(selectedItem.url)
-  //       }
-  //     }
-  //   }
-  //   document.addEventListener('keyup', handleEnter)
+  useEffect(() => {
+    const handleEnter = (e) => {
+      if (e.key === 'Enter' && !modal) {
+        const selectedItem = items[selectedIndex]
+        if (selectedItem) {
+          openURLInNewWindow(selectedItem.url)
+        }
+      }
+    }
+    document.addEventListener('keyup', handleEnter)
 
-  //   return () => {
-  //     document.removeEventListener('keyup', handleEnter)
-  //   }
-  // }, [selectedIndex, items])
+    return () => {
+      document.removeEventListener('keyup', handleEnter)
+    }
+  }, [selectedIndex, items, modal])
+
+  // open selected item in the browser window
+  useEffect(() => {
+    window.electron.ipcRenderer.on('open-item-in-browser', () => {
+      const selectedItem = items[selectedIndex]
+      console.log(selectedIndex, selectedItem)
+      if (selectedItem) {
+        window.api.shell.openExternal(selectedItem.url)
+      }
+    })
+
+    // Effect cleanup
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners('open-item-in-browser')
+    }
+  }, [selectedIndex, items])
 
   // open remote content url in new window
   const openURLInNewWindow = (url) => {
@@ -86,7 +107,6 @@ const Items = ({ setAddItemLoading, setModal, items, setItems }) => {
       nodeIntegration=0;
     `
     )
-    // use reader.js here
   }
 
   return (
@@ -101,7 +121,7 @@ const Items = ({ setAddItemLoading, setModal, items, setItems }) => {
               onDoubleClick={() => handleItemOpen(item.url)}
             >
               <div className="img">
-                {item.ss ? <img src={item.ss} alt={item.title} /> : <span>{item.err}</span>}
+                <img src={item.ss} alt={item.title} />
               </div>
               <div className="content">
                 <p>{item.title}</p>

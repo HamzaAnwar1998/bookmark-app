@@ -30,7 +30,14 @@ const modalVariants = {
   }
 }
 
-const Modal = ({ setModal, addItemLoading, setAddItemLoading }) => {
+const Modal = ({
+  setModal,
+  addItemLoading,
+  setAddItemLoading,
+  invalidURL,
+  setInvalidURL,
+  items
+}) => {
   // states
   const [url, setUrl] = useState('')
 
@@ -46,7 +53,7 @@ const Modal = ({ setModal, addItemLoading, setAddItemLoading }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     setAddItemLoading(true)
-    window.electron.ipcRenderer.send('new-item', url)
+    window.electron.ipcRenderer.send('new-item', { url, items })
   }
 
   return (
@@ -55,7 +62,14 @@ const Modal = ({ setModal, addItemLoading, setAddItemLoading }) => {
         <motion.div className="modal" variants={modalVariants} initial="hidden" animate="visible">
           <div className="modal-header">
             <h5>Add Items</h5>
-            <button type="button" onClick={() => setModal(false)} disabled={addItemLoading}>
+            <button
+              type="button"
+              onClick={() => {
+                setInvalidURL(false)
+                setModal(false)
+              }}
+              disabled={addItemLoading}
+            >
               <Icon icon={x} size={16} />
             </button>
           </div>
@@ -72,11 +86,15 @@ const Modal = ({ setModal, addItemLoading, setAddItemLoading }) => {
                 onChange={(e) => setUrl(e.target.value)}
                 ref={urlRef}
               />
+              {invalidURL && <div className="error-msg">{invalidURL}</div>}
               <div className="submit-and-cancel-div">
                 <button
                   type="button"
                   className="cancel"
-                  onClick={() => setModal(false)}
+                  onClick={() => {
+                    setInvalidURL(false)
+                    setModal(false)
+                  }}
                   disabled={addItemLoading}
                 >
                   CANCEL

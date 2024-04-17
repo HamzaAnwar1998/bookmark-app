@@ -1,44 +1,24 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import iconPng from '../../resources/icon.png?asset'
+import iconIco from '../../resources/icon.ico?asset'
+import iconIcns from '../../resources/icon.icns?asset'
 import windowStateKeeper from 'electron-window-state'
 import { readItem } from './readItem'
+import appMenu from './menu'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-let secondaryWindow
 
 // ipc messaging
 // new item
 ipcMain.on('new-item', (e, args) => {
   readItem(args, (data) => {
-    console.log(data) // not working
-    // e.sender.send('new-item-success', data) // woking
-    createSecWindow(data) // not working
+    e.sender.send('new-item-success', data)
   })
 })
-
-// create secondary window
-function createSecWindow(data) {
-  console.log(data)
-  // secondaryWindow = new BrowserWindow({
-  //   width: 1200,
-  //   height: 800,
-  //   maxWidth: 2000,
-  //   maxHeight: 2000,
-  //   show: false,
-  //   autoHideMenuBar: false
-  // })
-
-  // // window is ready to be shown
-  // secondaryWindow.on('ready-to-show', () => {
-  //   secondaryWindow.show()
-  // })
-
-  // secondaryWindow.loadURL('https://www.facebook.com/')
-}
 
 // create window function
 function createWindow() {
@@ -59,12 +39,29 @@ function createWindow() {
     minHeight: 300,
     show: false,
     autoHideMenuBar: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    // ...(process.platform === 'linux' ? { icon: iconPng } : { icon: iconIco }),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+
+  // set icon browser window
+  if (process.platform === 'darwin') {
+    mainWindow.setIcon(iconIcns)
+  } else if (process.platform === 'win32') {
+    mainWindow.setIcon(iconIco)
+  } else {
+    mainWindow.setIcon(iconPng)
+  }
+
+  // set dock icon on
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(iconIcns)
+  }
+
+  // set menu
+  appMenu(mainWindow.webContents)
 
   // use main window state
   mainWindowState.manage(mainWindow)
@@ -77,13 +74,7 @@ function createWindow() {
   // open a new window with external url
   mainWindow.webContents.setWindowOpenHandler(() => {
     return {
-      action: 'allow',
-      overrideBrowserWindowOptions: {
-        webPreferences: {
-          preload: join(__dirname, '../renderer/src/reader.js'),
-          sandbox: true
-        }
-      }
+      action: 'allow'
     }
   })
 
