@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: Readit
+appId: com.jssolutions.readit
+copyright: Copyright jssolutions
 directories:
   buildResources: build
 files:
