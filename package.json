@@ -1,10 +1,11 @@
 {
   "name": "vite-react-electron",
   "productName": "Readit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Electron application with React",
   "main": "./out/main/index.js",
   "author": "HamzaAnwar",
+  "repository": "https://github.com/HamzaAnwar1998/bookmark-app",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
@@ -18,7 +19,8 @@
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
     "help": "electron-builder --help",
-    "cert": "electron-builder create-self-signed-cert -p jssolutions"
+    "cert": "electron-builder create-self-signed-cert -p jssolutions",
+    "release": "npm run build && electron-builder --win -p onTagOrDraft"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
@@ -43,6 +45,9 @@
     "vite": "^5.0.12"
   },
   "build": {
+    "publish": {
+      "provider": "github"
+    },
     "win": {
       "icon": "build/icon.ico",
       "certificateFile": "private/jssolutions.pfx",

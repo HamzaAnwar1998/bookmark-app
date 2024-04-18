@@ -25,7 +25,7 @@ export const readItem = (obj, callback) => {
   offscreenWindow.webContents.on('did-finish-load', () => {
     const id = Date.now().toString()
     const title = offscreenWindow.getTitle().slice(0, 65)
-    if (title !== 'vite-react-electron') {
+    if (title !== 'Readit') {
       offscreenWindow.webContents
         .capturePage()
         .then((image) => {
@@ -44,7 +44,13 @@ export const readItem = (obj, callback) => {
         })
     } else {
       // execute failed callback
-      callback({ id, title, ss: null, url: obj.url, err: 'Invalid URL' })
+      callback({
+        id,
+        title,
+        ss: null,
+        url: obj.url,
+        err: 'URL does not exist. Please use a real website url'
+      })
     }
   })
 }
