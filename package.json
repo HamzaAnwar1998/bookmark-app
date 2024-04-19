@@ -1,7 +1,7 @@
 {
   "name": "vite-react-electron",
   "productName": "Readit",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "An Electron application with React",
   "main": "./out/main/index.js",
   "author": "HamzaAnwar",
@@ -25,7 +25,6 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "electron-updater": "^6.1.7",
     "electron-window-state": "^5.0.3",
     "framer-motion": "^11.0.20",
     "react-icons-kit": "^2.0.0"
