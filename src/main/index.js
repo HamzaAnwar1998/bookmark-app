@@ -7,6 +7,7 @@ import iconIcns from '../../resources/icon.icns?asset'
 import windowStateKeeper from 'electron-window-state'
 import { readItem } from './readItem'
 import appMenu from './menu'
+import { checkAndApplyUpdates } from './updater'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -22,6 +23,8 @@ ipcMain.on('new-item', (e, args) => {
 
 // create window function
 function createWindow() {
+  // check and apply updates
+  setTimeout(checkAndApplyUpdates, 1500)
   // default window state
   const mainWindowState = windowStateKeeper({
     defaultWidth: 500,
