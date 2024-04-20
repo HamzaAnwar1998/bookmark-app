@@ -25,6 +25,7 @@ ipcMain.on('new-item', (e, args) => {
 function createWindow() {
   // check and apply updates
   setTimeout(checkAndApplyUpdates, 1500)
+
   // default window state
   const mainWindowState = windowStateKeeper({
     defaultWidth: 500,
