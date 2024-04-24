@@ -24,7 +24,7 @@
   border: none;
   outline: none;
   cursor: pointer;
-  background-color: #007c16;
+  background-color: #1722c1;
   color: #fff;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
@@ -306,4 +306,15 @@ button.submit {
   margin-bottom: 1rem;
   border: 1px solid transparent;
   border-radius: 0.25rem;
+}
+
+.progress-bar-div {
+  width: 100%;
+  height: 20px;
+  background-color: #fff;
+}
+
+.progress-bar-div .progress-bar {
+  height: 100%;
+  background-color: #007c16;
 }

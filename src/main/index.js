@@ -23,9 +23,6 @@ ipcMain.on('new-item', (e, args) => {
 
 // create window function
 function createWindow() {
-  // check and apply updates
-  setTimeout(checkAndApplyUpdates, 1500)
-
   // default window state
   const mainWindowState = windowStateKeeper({
     defaultWidth: 500,
@@ -89,6 +86,11 @@ function createWindow() {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // check and apply updates after 1.5 seconds
+  setTimeout(() => {
+    checkAndApplyUpdates()
+  }, 1500)
 }
 
 // This method will be called when Electron has finished

@@ -18,18 +18,6 @@ function App() {
     }
   }, [])
 
-  // listen for open modal from the app menu
-  useEffect(() => {
-    window.electron.ipcRenderer.on('open-modal', () => {
-      setModal(true)
-    })
-
-    // Effect cleanup
-    return () => {
-      window.electron.ipcRenderer.removeAllListeners('open-modal')
-    }
-  }, [])
-
   return (
     <div className="wrapper">
       <Header setModal={setModal} setItems={setItems} />
